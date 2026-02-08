@@ -1,0 +1,117 @@
+<script>
+    let stability = 50;
+    let popularity = 50;
+    let currentStep = 0;
+
+    // Fases expandidas com dilemas clássicos de Maquiavel
+    const scenarios = [
+        {
+            text: "Cenário 1: O povo está passando fome devido a uma colheita ruim. O que você faz?",
+            opt1: "Dar o trigo das reservas (Ganha Popularidade, mas esvazia o Estado)",
+            opt2: "Guardar para o exército (Mantém a força, mas gera revolta)",
+            res1: { est: -15, pop: 25 },
+            res2: { est: 15, pop: -20 }
+        },
+        {
+            text: "Cenário 2: Mercenários inimigos estão nas fronteiras. Eles aceitam suborno para ir embora.",
+            opt1: "Pagar o suborno (Gasta tesouro, mostra fraqueza)",
+            opt2: "Armar os cidadãos e lutar (Cria uma milícia própria, mas é arriscado)",
+            res1: { est: -20, pop: 5 },
+            res2: { est: 25, pop: -10 }
+        },
+        {
+            text: "Cenário 3: Um aliado traiu sua confiança. Como punir?",
+            opt1: "Ser piedoso e exilar (Parece humano, mas o traidor pode voltar)",
+            opt2: "Punição severa e imediata (Elimina a ameaça, gera medo)",
+            res1: { est: -25, pop: 15 },
+            res2: { est: 30, pop: -15 }
+        },
+        {
+            text: "Cenário 4: Você conquistou uma nova cidade. O povo de lá tem leis muito diferentes das suas.",
+            opt1: "Respeitar as leis deles (Povo fica calmo, mas o controle é difícil)",
+            opt2: "Mudar-se para lá e impor suas leis (Controle total, mas o povo odeia)",
+            res1: { est: -10, pop: 20 },
+            res2: { est: 30, pop: -30 }
+        },
+        {
+            text: "Cenário 5: Um ministro seu ficou muito popular e está sendo visto como o 'bonzinho' enquanto você faz o trabalho sujo.",
+            opt1: "Deixá-lo continuar (Paz interna, mas você perde o respeito)",
+            opt2: "Substituí-lo publicamente (Você assume o comando, mas a culpa cai em você)",
+            res1: { est: -20, pop: 20 },
+            res2: { est: 25, pop: -20 }
+        },
+        {
+            text: "Cenário FINAL: Uma conspiração é descoberta entre os nobres. O que fazer?",
+            opt1: "Fazer uma investigação lenta (Justiça justa, mas dá tempo deles fugirem)",
+            opt2: "Agir com 'Crueldade Bem Empregada' (Rápido e cirúrgico contra os líderes)",
+            res1: { est: -30, pop: 10 },
+            res2: { est: 40, pop: -20 }
+        }
+    ];
+
+    function updateStats() {
+        document.getElementById('stat-est').innerText = stability;
+        document.getElementById('stat-pop').innerText = popularity;
+
+        // Condições de derrota
+        if (stability <= 0) {
+            endGame("DERROTA: Você foi deposto por um golpe de Estado. Como Maquiavel disse, você não teve 'Virtù' para manter o poder.");
+        } else if (popularity <= 0) {
+            endGame("DERROTA: O povo revoltou-se e queimou o palácio. Você esqueceu que, embora seja melhor ser temido que amado, você NUNCA deve ser odiado.");
+        } 
+        // Vitória
+        else if (currentStep >= scenarios.length) {
+            endGame("VITÓRIA! Você manteve o Estado seguro. Maquiavel diria que você entendeu a diferença entre a ética moral e a ética política.");
+        }
+    }
+
+    function makeChoice(num) {
+        let res = num === 1 ? scenarios[currentStep].res1 : scenarios[currentStep].res2;
+        stability += res.est;
+        popularity += res.pop;
+        currentStep++;
+        
+        if (currentStep < scenarios.length && stability > 0 && popularity > 0) {
+            document.getElementById('scenario-text').innerText = scenarios[currentStep].text;
+            document.getElementById('options').children[0].innerText = scenarios[currentStep].opt1;
+            document.getElementById('options').children[1].innerText = scenarios[currentStep].opt2;
+            updateStats();
+        } else {
+            updateStats();
+        }
+    }
+
+    function endGame(msg) {
+        document.getElementById('game-box').classList.add('hidden');
+        document.getElementById('game-over').classList.remove('hidden');
+        document.getElementById('over-text').innerText = msg;
+        
+        // Mudar título do fim de jogo dependendo do resultado
+        if (stability > 0 && popularity > 0) {
+            document.getElementById('over-title').innerText = "O Príncipe Triunfou!";
+            document.getElementById('over-title').style.color = "var(--dourado)";
+        } else {
+            document.getElementById('over-title').innerText = "Fim da Dinastia";
+            document.getElementById('over-title').style.color = "red";
+        }
+    }
+
+    function resetGame() {
+        stability = 50; 
+        popularity = 50; 
+        currentStep = 0;
+        document.getElementById('game-box').classList.remove('hidden');
+        document.getElementById('game-over').classList.add('hidden');
+        document.getElementById('scenario-text').innerText = scenarios[0].text;
+        document.getElementById('options').children[0].innerText = scenarios[0].opt1;
+        document.getElementById('options').children[1].innerText = scenarios[0].opt2;
+        updateStats();
+    }
+
+    // Iniciar com o primeiro cenário
+    window.onload = () => {
+        document.getElementById('scenario-text').innerText = scenarios[0].text;
+        document.getElementById('options').children[0].innerText = scenarios[0].opt1;
+        document.getElementById('options').children[1].innerText = scenarios[0].opt2;
+    };
+</script>
