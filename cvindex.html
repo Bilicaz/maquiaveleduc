@@ -1,51 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maquiavel: A Ética do Poder</title>
+    <style>
+        :root {
+            --vinho: #5e0b15;
+            --dourado: #d4af37;
+            --preto: #1a1a1a;
+            --creme: #f5f5dc;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--preto);
+            color: var(--creme);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--vinho);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid var(--dourado);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        h1, h2 { color: var(--dourado); }
+
+        .game-card {
+            background: #2a2a2a;
+            border: 2px solid var(--dourado);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: var(--vinho);
+            color: white;
+            border: 1px solid var(--dourado);
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--dourado);
+            color: var(--preto);
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Nicolau Maquiavel</h1>
+    <p>A Verdade Efetiva das Coisas</p>
+</header>
+
+<div class="container">
+    <section id="intro">
+        <h2>A Ética do Príncipe</h2>
+        <p>Para Maquiavel, a política possui uma ética própria. Não se trata de ser "mau", mas de entender que o governante deve agir de acordo com a necessidade para manter a segurança do Estado.</p>
+    </section>
+
+    <hr>
+
+    <section id="game-container">
+        <h2>O Peso da Coroa: O Jogo</h2>
+        <p>Você é o governante de Florença. Suas escolhas determinarão seu destino. Mantenha a estabilidade acima de tudo.</p>
+        
+        <div class="game-card" id="game-box">
+            <div class="stats">
+                <span>🏛️ Estabilidade: <span id="stat-est">50</span></span>
+                <span>👥 Popularidade: <span id="stat-pop">50</span></span>
+            </div>
+            
+            <div id="scenario-text">O povo está passando fome devido a uma colheita ruim. O que você faz?</div>
+            
+            <div id="options">
+                <button onclick="makeChoice(1)">Dar o trigo das reservas (Custa Estabilidade)</button>
+                <button onclick="makeChoice(2)">Guardar para o exército (Custa Popularidade)</button>
+            </div>
+        </div>
+        
+        <div id="game-over" class="hidden">
+            <h3 id="over-title">Fim de Jogo</h3>
+            <p id="over-text"></p>
+            <button onclick="resetGame()">Tentar Novamente</button>
+        </div>
+    </section>
+</div>
+
 <script>
     let stability = 50;
     let popularity = 50;
     let currentStep = 0;
 
-    // Fases expandidas com dilemas clássicos de Maquiavel
     const scenarios = [
         {
-            text: "Cenário 1: O povo está passando fome devido a uma colheita ruim. O que você faz?",
-            opt1: "Dar o trigo das reservas (Ganha Popularidade, mas esvazia o Estado)",
-            opt2: "Guardar para o exército (Mantém a força, mas gera revolta)",
-            res1: { est: -15, pop: 25 },
-            res2: { est: 15, pop: -20 }
+            text: "Mercenários inimigos estão nas fronteiras. Eles aceitam suborno para ir embora.",
+            opt1: "Pagar o suborno (Perde Estabilidade financeira)",
+            opt2: "Enfrentá-los (Risco de vida, mas ganha respeito)",
+            res1: { est: -20, pop: 10 },
+            res2: { est: 20, pop: -10 }
         },
         {
-            text: "Cenário 2: Mercenários inimigos estão nas fronteiras. Eles aceitam suborno para ir embora.",
-            opt1: "Pagar o suborno (Gasta tesouro, mostra fraqueza)",
-            opt2: "Armar os cidadãos e lutar (Cria uma milícia própria, mas é arriscado)",
-            res1: { est: -20, pop: 5 },
-            res2: { est: 25, pop: -10 }
-        },
-        {
-            text: "Cenário 3: Um aliado traiu sua confiança. Como punir?",
-            opt1: "Ser piedoso e exilar (Parece humano, mas o traidor pode voltar)",
-            opt2: "Punição severa e imediata (Elimina a ameaça, gera medo)",
-            res1: { est: -25, pop: 15 },
-            res2: { est: 30, pop: -15 }
-        },
-        {
-            text: "Cenário 4: Você conquistou uma nova cidade. O povo de lá tem leis muito diferentes das suas.",
-            opt1: "Respeitar as leis deles (Povo fica calmo, mas o controle é difícil)",
-            opt2: "Mudar-se para lá e impor suas leis (Controle total, mas o povo odeia)",
-            res1: { est: -10, pop: 20 },
-            res2: { est: 30, pop: -30 }
-        },
-        {
-            text: "Cenário 5: Um ministro seu ficou muito popular e está sendo visto como o 'bonzinho' enquanto você faz o trabalho sujo.",
-            opt1: "Deixá-lo continuar (Paz interna, mas você perde o respeito)",
-            opt2: "Substituí-lo publicamente (Você assume o comando, mas a culpa cai em você)",
-            res1: { est: -20, pop: 20 },
-            res2: { est: 25, pop: -20 }
-        },
-        {
-            text: "Cenário FINAL: Uma conspiração é descoberta entre os nobres. O que fazer?",
-            opt1: "Fazer uma investigação lenta (Justiça justa, mas dá tempo deles fugirem)",
-            opt2: "Agir com 'Crueldade Bem Empregada' (Rápido e cirúrgico contra os líderes)",
-            res1: { est: -30, pop: 10 },
-            res2: { est: 40, pop: -20 }
+            text: "Um aliado traiu sua confiança. Como punir?",
+            opt1: "Ser piedoso e perdoar (Amado, mas parece fraco)",
+            opt2: "Punição exemplar e pública (Temido, mas mantém ordem)",
+            res1: { est: -30, pop: 20 },
+            res2: { est: 30, pop: -10 }
         }
     ];
 
@@ -53,16 +136,9 @@
         document.getElementById('stat-est').innerText = stability;
         document.getElementById('stat-pop').innerText = popularity;
 
-        // Condições de derrota
-        if (stability <= 0) {
-            endGame("DERROTA: Você foi deposto por um golpe de Estado. Como Maquiavel disse, você não teve 'Virtù' para manter o poder.");
-        } else if (popularity <= 0) {
-            endGame("DERROTA: O povo revoltou-se e queimou o palácio. Você esqueceu que, embora seja melhor ser temido que amado, você NUNCA deve ser odiado.");
-        } 
-        // Vitória
-        else if (currentStep >= scenarios.length) {
-            endGame("VITÓRIA! Você manteve o Estado seguro. Maquiavel diria que você entendeu a diferença entre a ética moral e a ética política.");
-        }
+        if (stability <= 0) endGame("Você foi deposto por um golpe. Faltou 'Virtù' para manter o poder.");
+        else if (popularity <= 0) endGame("O povo se revoltou e invadiu o palácio. Você foi linchado.");
+        else if (currentStep >= scenarios.length) endGame("Você sobreviveu! Maquiavel estaria orgulhoso: você manteve o Estado.");
     }
 
     function makeChoice(num) {
@@ -85,33 +161,16 @@
         document.getElementById('game-box').classList.add('hidden');
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('over-text').innerText = msg;
-        
-        // Mudar título do fim de jogo dependendo do resultado
-        if (stability > 0 && popularity > 0) {
-            document.getElementById('over-title').innerText = "O Príncipe Triunfou!";
-            document.getElementById('over-title').style.color = "var(--dourado)";
-        } else {
-            document.getElementById('over-title').innerText = "Fim da Dinastia";
-            document.getElementById('over-title').style.color = "red";
-        }
     }
 
     function resetGame() {
-        stability = 50; 
-        popularity = 50; 
-        currentStep = 0;
+        stability = 50; popularity = 50; currentStep = 0;
         document.getElementById('game-box').classList.remove('hidden');
         document.getElementById('game-over').classList.add('hidden');
-        document.getElementById('scenario-text').innerText = scenarios[0].text;
-        document.getElementById('options').children[0].innerText = scenarios[0].opt1;
-        document.getElementById('options').children[1].innerText = scenarios[0].opt2;
+        document.getElementById('scenario-text').innerText = "O povo está passando fome. O que você faz?";
         updateStats();
     }
-
-    // Iniciar com o primeiro cenário
-    window.onload = () => {
-        document.getElementById('scenario-text').innerText = scenarios[0].text;
-        document.getElementById('options').children[0].innerText = scenarios[0].opt1;
-        document.getElementById('options').children[1].innerText = scenarios[0].opt2;
-    };
 </script>
+
+</body>
+</html>
